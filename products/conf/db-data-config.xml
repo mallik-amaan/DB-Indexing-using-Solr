@@ -1,0 +1,18 @@
+<dataConfig>
+  <dataSource 
+    driver="org.postgresql.Driver"
+    url="jdbc:postgresql://localhost:5432/products"
+    user="myuser"
+    password="mypassword" />
+    
+   <document>
+    <entity name="product"
+            query="SELECT * FROM products">
+      <field column="id" name="id" />
+      <field column="name" name="name" />
+      <field column="category" name="category" />
+      <field column="price" name="price" />
+      <field column="description" name="description" />
+    </entity>
+  </document>
+</dataConfig>

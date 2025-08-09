@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Add New Product</h1>
+<form id="addProductForm">
+  <div class="mb-3">
+    <label for="name" class="form-label">Product Name</label>
+    <input type="text" id="name" class="form-control" required />
+  </div>
+  <div class="mb-3">
+    <label for="category" class="form-label">Category</label>
+    <input type="text" id="category" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label for="price" class="form-label">Price</label>
+    <input type="number" step="0.01" id="price" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label for="description" class="form-label">Description</label>
+    <textarea id="description" class="form-control"></textarea>
+  </div>
+  <button type="submit" class="btn btn-success">Add Product</button>
+</form>
+<div id="msg" class="mt-3"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('addProductForm').addEventListener('submit', async e => {
+  e.preventDefault();
+
+  const product = {
+    name: document.getElementById('name').value,
+    category: document.getElementById('category').value,
+    price: parseFloat(document.getElementById('price').value) || 0,
+    description: document.getElementById('description').value
+  };
+
+  const res = await fetch('/add', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(product)
+  });
+
+  const msgDiv = document.getElementById('msg');
+  if (res.ok) {
+    msgDiv.innerHTML = '<div class="alert alert-success">Product added successfully!</div>';
+    e.target.reset();
+  } else {
+    const err = await res.json();
+    msgDiv.innerHTML = `<div class="alert alert-danger">Error: ${err.error}</div>`;
+  }
+});
+</script>
+{% endblock %}

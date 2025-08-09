@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h4 class="center-align">Search Products</h4>
+  <div class="input-field">
+    <input type="text" id="search-input" placeholder="Search by name, category, etc.">
+  </div>
+
+  <table class="table table-striped" id="resultsTable" style="margin-top: 20px;">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const input = document.getElementById('search-input');
+  const tbody = document.querySelector('#resultsTable tbody');
+  let timeout = null;
+
+  input.addEventListener('input', () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      const query = input.value.trim();
+      if (query === '') {
+        tbody.innerHTML = '';
+        return;
+      }
+
+      fetch(`/search?q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+          tbody.innerHTML = '';
+          if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4">No results found.</td></tr>';
+          } else {
+            data.forEach(item => {
+              tbody.innerHTML += `
+                <tr>
+                  <td>${item.name || ''}</td>
+                  <td>${item.category || ''}</td>
+                  <td>${item.price || ''}</td>
+                  <td>${item.description || ''}</td>
+                </tr>
+              `;
+            });
+          }
+        });
+    }, 300);
+  });
+</script>
+{% endblock %}

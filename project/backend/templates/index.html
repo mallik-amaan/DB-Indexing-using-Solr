@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Products</h1>
+<table class="table table-striped" id="productTable">
+  <thead>
+    <tr>
+      <th>Name</th><th>Category</th><th>Price</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function fetchProducts(query='*:*') {
+  const res = await fetch(`/search?q=${encodeURIComponent(query)}`);
+  if (!res.ok) {
+    alert("Failed to fetch products");
+    return;
+  }
+  const products = await res.json();
+  const tbody = document.querySelector("#productTable tbody");
+  tbody.innerHTML = '';
+  if (products.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4">No products found</td></tr>';
+    return;
+  }
+  products.forEach(p => {
+    tbody.innerHTML += `<tr>
+      <td>${p.name || ''}</td>
+      <td>${p.category || ''}</td>
+      <td>${p.price || ''}</td>
+      <td>${p.description || ''}</td>
+    </tr>`;
+  });
+}
+
+// Fetch all products when page loads
+window.addEventListener('DOMContentLoaded', () => {
+  fetchProducts();
+});
+</script>
+{% endblock %}
